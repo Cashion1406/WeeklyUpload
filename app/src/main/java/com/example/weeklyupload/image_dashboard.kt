@@ -20,9 +20,11 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.util.Patterns
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -198,6 +200,24 @@ class image_dashboard : Fragment() {
 
         imageDefult()
 
+        ed_image_url.setOnKeyListener { v, keyCode, event ->
+
+            when {
+
+                ((keyCode == KeyEvent.KEYCODE_ENTER) && event.action == KeyEvent.ACTION_UP) -> {
+                    addImage()
+                    ed_image_url.clearFocus()
+                    view.hideKeyboard()
+                }
+            }
+            return@setOnKeyListener false
+        }
+        ed_image_url.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                register_email.helperText = null
+            }
+
+        }
         ed_image_url.addTextChangedListener {
 
             if (ed_image_url.text!!.isEmpty()) {
@@ -214,7 +234,8 @@ class image_dashboard : Fragment() {
         }
 
         btn_add_image.setOnClickListener {
-
+            register_email.helperText = null
+            ed_image_url.clearFocus()
             addImage()
 
         }
@@ -228,15 +249,24 @@ class image_dashboard : Fragment() {
             checkdownPer()
         }
         btn_clear.setOnClickListener {
+            ed_image_url.clearFocus()
+
             ed_image_url.text?.clear()
             img_view.setImageDrawable(null)
+            view.hideKeyboard()
             imageDefult()
         }
 
     }
 
+
+    fun View.hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
+    }
+
     private fun imageDefult() {
-        if (img_view.drawable==null){
+        if (img_view.drawable == null) {
             img_view.setImageResource(R.drawable.image_placeholder)
         }
 
@@ -261,7 +291,8 @@ class image_dashboard : Fragment() {
         } catch (e: Exception) {
 
             e.printStackTrace()
-            Toast.makeText(requireContext(), e.message.toString(), Toast.LENGTH_SHORT).show()
+            register_email.helperText = e.message.toString()
+
 
         }
 
@@ -283,6 +314,8 @@ class image_dashboard : Fragment() {
             requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         if (downloadManager != null) {
+            val img = Image(0, url, address!!)
+            imageViewModel.addimage(img)
 
             downloadManager.enqueue(request)
         }
@@ -318,7 +351,7 @@ class image_dashboard : Fragment() {
         } catch (e: Exception) {
 
             e.printStackTrace()
-            Toast.makeText(requireContext(), e.message.toString(), Toast.LENGTH_SHORT).show()
+            register_email.helperText = e.message.toString()
 
         }
     }
@@ -329,15 +362,11 @@ class image_dashboard : Fragment() {
 
         val isValid = URLUtil.isValidUrl(image) && Patterns.WEB_URL.matcher(image).matches()
         if (!isValid) {
-
-            Toast.makeText(requireContext(), "INVALID URL", Toast.LENGTH_SHORT).show()
+            register_email.helperText = "INVALID URL"
 
         } else {
             Picasso.get().load(image).into(img_view)
         }
-
-
-
         return isValid
     }
 
@@ -351,10 +380,7 @@ class image_dashboard : Fragment() {
             imageViewModel.addimage(img)
             Toast.makeText(requireContext(), "ADDED IMAGE", Toast.LENGTH_SHORT).show()
 
-        } else {
-            Toast.makeText(requireContext(), "SHITTU LINK", Toast.LENGTH_SHORT).show()
         }
-
 
     }
 

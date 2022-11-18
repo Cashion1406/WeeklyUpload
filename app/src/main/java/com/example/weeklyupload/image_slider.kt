@@ -121,5 +121,4 @@ class image_slider : Fragment() {
         return transformer
     }
 
-    private val slideRun = Runnable { vp_image.currentItem = vp_image.currentItem + 1 }
 }

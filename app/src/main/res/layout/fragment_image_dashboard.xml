@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".image_dashboard">
+    tools:context=".image_dashboard"
+    android:focusableInTouchMode="true">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/imageView"
@@ -30,6 +31,7 @@
 
 
     <LinearLayout
+
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,6 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView">
 
         <com.google.android.material.textfield.TextInputLayout
+
             android:id="@+id/register_email"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="wrap_content"
@@ -88,19 +91,19 @@
         android:id="@+id/btn_add_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="90dp"
-        android:layout_marginEnd="90dp"
+        android:layout_marginStart="100dp"
 
-        android:layout_marginBottom="90dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="75dp"
+
         android:background="@drawable/round_button"
+
+
         android:gravity="center"
-
         android:text="Fetch Image"
-
 
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -111,15 +114,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="5dp"
+
         android:background="@android:color/transparent"
 
         android:src="@drawable/camera_bg"
-
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_add_image">
+        app:layout_constraintStart_toStartOf="parent">
 
     </ImageButton>
 
@@ -128,10 +129,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="70dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="5dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/download_bg"
 
+        android:src="@drawable/download_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -143,8 +144,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="25dp"
 
+        android:layout_marginBottom="5dp"
         android:background="@android:color/transparent"
         android:src="@drawable/gallery_bg"
         app:layout_constraintBottom_toBottomOf="parent"

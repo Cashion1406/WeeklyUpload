@@ -55,7 +55,11 @@ class image_detail : Fragment() {
     fun shareItem(url: String?) {
         Picasso.get().load(url).into(object : com.squareup.picasso.Target {
             override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
+
+                val location = args.currentImage.location
+
                 val i = Intent(Intent.ACTION_SEND)
+                i.putExtra(Intent.EXTRA_TEXT, location)
                 i.type = "image/*"
                 i.putExtra(Intent.EXTRA_STREAM, getLocalBitmapUri(bitmap))
                 startActivity(Intent.createChooser(i, "Share Image"))

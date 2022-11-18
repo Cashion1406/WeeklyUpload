@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
 
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="40dp"
         android:background="@drawable/cicular_white_bg"
         android:padding="6dp"
         android:src="@drawable/ic_outline_share_24"
