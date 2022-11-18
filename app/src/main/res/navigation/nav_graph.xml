@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/image_dashboard">
+    <fragment
+        android:id="@+id/image_dashboard"
+        android:name="com.example.weeklyupload.image_dashboard"
+        android:label="fragment_image_dashboard"
+        tools:layout="@layout/fragment_image_dashboard" >
+        <action
+            android:id="@+id/action_image_dashboard_to_image_slider"
+            app:destination="@id/image_slider" />
+    </fragment>
+    <fragment
+        android:id="@+id/image_slider"
+        android:name="com.example.weeklyupload.image_slider"
+        android:label="fragment_image_slider"
+        tools:layout="@layout/fragment_image_slider" >
+        <action
+            android:id="@+id/action_image_slider_to_image_dashboard"
+            app:destination="@id/image_dashboard" />
+        <action
+            android:id="@+id/action_image_slider_to_image_detail"
+            app:destination="@id/image_detail" />
+    </fragment>
+    <fragment
+        android:id="@+id/image_detail"
+        android:name="com.example.weeklyupload.image_detail"
+        android:label="fragment_image_detail"
+        tools:layout="@layout/fragment_image_detail" >
+        <action
+            android:id="@+id/action_image_detail_to_image_slider"
+            app:destination="@id/image_slider" />
+        <argument
+            android:name="currentImage"
+            app:argType="com.example.weeklyupload.Object.Image" />
+    </fragment>
+</navigation>
