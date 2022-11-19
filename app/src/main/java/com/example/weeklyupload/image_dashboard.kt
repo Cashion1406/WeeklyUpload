@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.graphics.Bitmap
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -27,6 +26,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.webkit.URLUtil
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -45,6 +45,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.shashank.sony.fancytoastlib.FancyToast
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_image_dashboard.*
 import java.io.File
@@ -201,9 +202,7 @@ class image_dashboard : Fragment() {
         imageDefult()
 
         ed_image_url.setOnKeyListener { v, keyCode, event ->
-
             when {
-
                 ((keyCode == KeyEvent.KEYCODE_ENTER) && event.action == KeyEvent.ACTION_UP) -> {
                     addImage()
                     ed_image_url.clearFocus()
@@ -214,32 +213,29 @@ class image_dashboard : Fragment() {
         }
         ed_image_url.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                register_email.helperText = null
+                image_url_holder.helperText = null
             }
-
         }
         ed_image_url.addTextChangedListener {
 
             if (ed_image_url.text!!.isEmpty()) {
-
                 return@addTextChangedListener
             }
             fetchImage()
 
         }
-
-        btn_camera.setOnClickListener {
-            openCamera()
-
-        }
-
         btn_add_image.setOnClickListener {
-            register_email.helperText = null
+            image_url_holder.helperText = null
             ed_image_url.clearFocus()
             addImage()
 
         }
 
+
+        btn_camera.setOnClickListener {
+            openCamera()
+
+        }
         btn_gallery.setOnClickListener {
 
             loadGallery()
@@ -250,7 +246,7 @@ class image_dashboard : Fragment() {
         }
         btn_clear.setOnClickListener {
             ed_image_url.clearFocus()
-
+            image_url_holder.helperText = null
             ed_image_url.text?.clear()
             img_view.setImageDrawable(null)
             view.hideKeyboard()
@@ -272,6 +268,50 @@ class image_dashboard : Fragment() {
 
     }
 
+    private fun fetchImage(): Boolean {
+        val image = ed_image_url.text.toString().trim { it <= ' ' }
+        val isValid = URLUtil.isValidUrl(image) && Patterns.WEB_URL.matcher(image).matches()
+        if (image.isEmpty()) {
+
+            image_url_holder.helperText = "Empty image URL"
+        } else if (!isValid) {
+            image_url_holder.helperText = "INVALID URL"
+
+        } else {
+            Picasso.get().load(image).into(img_view)
+        }
+        return isValid
+    }
+
+    private fun addImage() {
+
+        val image = ed_image_url.text.toString().trim { it <= ' ' }
+
+        if (fetchImage()) {
+            val img = Image(0, image, address.toString())
+            imageViewModel.addimage(img)
+            FancyToast.makeText(
+                requireContext(),
+                "Added Image",
+                FancyToast.LENGTH_SHORT,
+                FancyToast.SUCCESS,
+                false
+            ).show()
+        }
+    }
+
+    private fun addImagefromGallery(image: Image) {
+        imageViewModel.addimage(image)
+        FancyToast.makeText(
+            requireContext(),
+            "Added Image from Gallery",
+            FancyToast.LENGTH_SHORT,
+            FancyToast.SUCCESS,
+            false
+        ).show()
+    }
+
+
     private fun checkdownPer() {
         try {
             if (ActivityCompat.checkSelfPermission(
@@ -285,17 +325,13 @@ class image_dashboard : Fragment() {
                     ), REQUEST_DOWNLOAD
                 )
                 startDownload()
-
             }
 
         } catch (e: Exception) {
 
             e.printStackTrace()
-            register_email.helperText = e.message.toString()
-
-
+            image_url_holder.helperText = e.message.toString()
         }
-
     }
 
     private fun startDownload() {
@@ -336,52 +372,18 @@ class image_dashboard : Fragment() {
                 )
                 loadGallery()
             } else {
-
-
                 val galleryIntent = Intent(
                     Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
-
-
                 startActivityForResult(galleryIntent, REQUEST_LOAD_GALLERY);
-
             }
 
         } catch (e: Exception) {
 
             e.printStackTrace()
-            register_email.helperText = e.message.toString()
-
+            image_url_holder.helperText = e.message.toString()
         }
-    }
-
-    private fun fetchImage(): Boolean {
-        val image = ed_image_url.text.toString().trim { it <= ' ' }
-
-
-        val isValid = URLUtil.isValidUrl(image) && Patterns.WEB_URL.matcher(image).matches()
-        if (!isValid) {
-            register_email.helperText = "INVALID URL"
-
-        } else {
-            Picasso.get().load(image).into(img_view)
-        }
-        return isValid
-    }
-
-    private fun addImage() {
-
-        val image = ed_image_url.text.toString().trim { it <= ' ' }
-
-        if (fetchImage()) {
-            val img = Image(0, image, address.toString())
-
-            imageViewModel.addimage(img)
-            Toast.makeText(requireContext(), "ADDED IMAGE", Toast.LENGTH_SHORT).show()
-
-        }
-
     }
 
 
@@ -426,6 +428,10 @@ class image_dashboard : Fragment() {
         when (requestCode) {
             REQUEST_CAPTURE_IMAGE ->
                 if (resultCode == Activity.RESULT_OK) {
+                    if (address == null || address!!.isEmpty()) {
+
+                        address = "N/A"
+                    }
                     val img = Image(0, "file://$pathImage", address!!)
 
                     img_view.setImageURI(Uri.parse(pathImage))
@@ -435,8 +441,8 @@ class image_dashboard : Fragment() {
 
                     fileCapture?.delete()
 
-                    Toast.makeText(requireContext(), fileCapture.toString(), Toast.LENGTH_LONG)
-                        .show()
+                    /*Toast.makeText(requireContext(), fileCapture.toString(), Toast.LENGTH_LONG)
+                        .show()*/
 
                 }
 
@@ -458,19 +464,40 @@ class image_dashboard : Fragment() {
 
                     pathImage = imagePath
                     cursor.close()
+                    val img = Image(0, "file://$pathImage", address!!)
+                    btn_add_image.setOnLongClickListener {
 
-                    Toast.makeText(requireContext(), pathImage, Toast.LENGTH_SHORT)
-                        .show()
+                        addImagefromGallery(img)
+                        return@setOnLongClickListener true
+                    }
+
+
+                    /*  Toast.makeText(requireContext(), pathImage, Toast.LENGTH_SHORT)
+                          .show()*/
 
                     img_view.setImageURI(Uri.parse(pathImage))
-
-
                 }
             REQUEST_DOWNLOAD ->
                 startDownload()
-
         }
 
+    }
+
+    fun confirDialog(image: Image) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage("Add selected Image to Image List ?")
+        builder.setTitle("Selected Image")
+        builder.setIcon(R.drawable.ic_launcher_foreground)
+
+        builder.setPositiveButton("Yes") { dialogInterface, which ->
+            imageViewModel.addimage(image)
+            dialogInterface.dismiss()
+        }
+        builder.setNegativeButton("No") { lmao, which ->
+            lmao.dismiss()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.show()
     }
 
 
@@ -502,7 +529,6 @@ class image_dashboard : Fragment() {
                     mLocationRequest!!, mLocationCallback!!,
                     Looper.getMainLooper()
                 )
-
             }
                 ?.addOnFailureListener {
 
@@ -523,8 +549,6 @@ class image_dashboard : Fragment() {
                                     "PENDING REQUEST CANT EXECUTE",
                                     Toast.LENGTH_SHORT
                                 ).show()
-
-
                             }
 
                         LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE ->
@@ -540,7 +564,7 @@ class image_dashboard : Fragment() {
 
     fun stoplocate() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback!!)
-        Toast.makeText(requireContext(), "LOcation Stop", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(), "LOcation Stop", Toast.LENGTH_SHORT).show()
     }
 
     fun checkPER(): Boolean {
@@ -566,6 +590,5 @@ class image_dashboard : Fragment() {
             stoplocate()
         }
     }
-
 
 }

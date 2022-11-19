@@ -72,5 +72,8 @@ dependencies {
     //easy permission
     implementation 'com.karumi:dexter:6.2.3'
 
+    //FANCY Toast
+    implementation 'io.github.shashank02051997:FancyToast:2.0.2'
+
 
 }

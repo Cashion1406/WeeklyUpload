@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.image_container.view.*
 
 class imageAdapter :
     RecyclerView.Adapter<imageAdapter.ViewHolder>() {
-    var activity: Activity? = null
 
     private var images: List<Image> = ArrayList()
 
@@ -31,50 +30,31 @@ class imageAdapter :
                 parent,
                 false
             )
-
         )
     }
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = images[position]
-
-
-
-
         Picasso.get().load(item.path).into(holder.imageview);
         holder.imageLocation.text = item.location
         holder.imageview.setOnClickListener {
-
             val action = image_sliderDirections.actionImageSliderToImageDetail(item)
             holder.imageview.findNavController().navigate(action)
         }
-
     }
 
-    /**
-     * Gets the number of items in the list
-     */
     override fun getItemCount(): Int {
         return images.size
     }
 
-    /**
-     * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
-     */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // Holds the TextView that will add each item to
-
         val imageview = view.iv_image
         val imageLocation = view.image_location
-
-
     }
 
     fun setImage(image: List<Image>) {
         this.images = image
         notifyDataSetChanged()
-
     }
 
     fun getImage(position: Int): Image {

@@ -20,15 +20,12 @@ class NetworkConnection(val context: Context) : LiveData<Boolean>() {
     private val connectivity: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-
     override fun onActive() {
         super.onActive()
         updateConnection()
-
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
                 connectivity.registerDefaultNetworkCallback(connetionCallback())
-
             }
             else -> {
 
@@ -39,18 +36,13 @@ class NetworkConnection(val context: Context) : LiveData<Boolean>() {
             }
 
         }
-
-
     }
-
 
     override fun onInactive() {
         super.onInactive()
         //Toast.makeText(context, "Connection tracking END", Toast.LENGTH_SHORT).show()
         connectivity.unregisterNetworkCallback(networkConnectionCallback)
-
     }
-
 
     fun connetionCallback(): ConnectivityManager.NetworkCallback {
 
@@ -68,9 +60,7 @@ class NetworkConnection(val context: Context) : LiveData<Boolean>() {
         }
 
         return networkConnectionCallback
-
     }
-
 
     private fun updateConnection() {
         val networkConnection: NetworkInfo? = connectivity.activeNetworkInfo
