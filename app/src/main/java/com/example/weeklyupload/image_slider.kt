@@ -49,31 +49,17 @@ class image_slider : Fragment() {
 
         imageViewModel.getallImage().observe(viewLifecycleOwner) { image ->
             imageAdapter.setImage(image)
-
-
         }
-
         vp_image.apply {
             adapter = imageAdapter
             offscreenPageLimit = 3
             clipChildren = false
             clipToPadding = false
             setPageTransformer(tranformer())
-            //registerOnPageChangeCallback()
         }
-        /*vp_image.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                slideHanlder.removeCallbacks(slideRun)
-                slideHanlder.postDelayed(slideRun, 2000)
-
-            }
-        })*/
-
         vp_image.children.find { it is RecyclerView }.let {
 
             ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP) {
-
                 override fun onMove(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder,
@@ -84,9 +70,6 @@ class image_slider : Fragment() {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val image: Image = imageAdapter.getImage(viewHolder.adapterPosition)
-
-
-
                     imageViewModel.deleteimage(image)
 
                     Snackbar.make(vp_image, "Delete " + image.path, Snackbar.LENGTH_LONG)
@@ -99,13 +82,8 @@ class image_slider : Fragment() {
                 }
 
             }).attachToRecyclerView(it as RecyclerView)
-
-
         }
-
-
     }
-
 
     private fun tranformer(): ViewPager2.PageTransformer {
         val transformer = CompositePageTransformer()

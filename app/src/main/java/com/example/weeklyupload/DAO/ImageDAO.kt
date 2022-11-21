@@ -11,9 +11,6 @@ interface ImageDAO {
     @Insert
     fun insert(image: Image)
 
-    @Update
-    fun update(image: Image)
-
     @Delete
     fun delete(image: Image)
 

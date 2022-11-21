@@ -16,17 +16,10 @@ class ImageRespository(val imageDAO: ImageDAO) {
 
     }
 
-    fun updateImage(image: Image) {
-        return imageDAO.update(image)
-
-    }
-
-
     fun deleteImage(image: Image) {
         imageDAO.delete(image)
 
     }
-
     fun getlastedImage(): kotlinx.coroutines.flow.Flow<List<Image>> {
 
         return imageDAO.getlastedImage()

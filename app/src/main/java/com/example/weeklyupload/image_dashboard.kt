@@ -60,7 +60,6 @@ class image_dashboard : Fragment() {
     private val REQUEST_CAPTURE_IMAGE = 200
     private val REQUEST_LOAD_GALLERY = 100
     private val REQUEST_DOWNLOAD = 300
-    private lateinit var imageAdapter: imageAdapter
     private lateinit var imageViewModel: ImageViewModel
 
     private val REQUEST_CHECK_SETTING = 100
@@ -86,7 +85,6 @@ class image_dashboard : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        imageAdapter = imageAdapter()
         networkConnection = NetworkConnection(requireContext())
 
         imageViewModel = ViewModelProvider(this)[ImageViewModel::class.java]
@@ -198,8 +196,6 @@ class image_dashboard : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        imageDefult()
 
         ed_image_url.setOnKeyListener { v, keyCode, event ->
             when {

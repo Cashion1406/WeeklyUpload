@@ -16,45 +16,25 @@ class ImageViewModel(application: Application) : AndroidViewModel(application) {
 
     val imagelist: LiveData<List<Image>>
     private val respository: ImageRespository
-
     init {
         val imageDAO = ImageDB.getDB(application).imageDAO()
         respository = ImageRespository(imageDAO)
         imagelist = respository.fetchAllImage
-
     }
-
     fun addimage(image: Image) {
         viewModelScope.launch(Dispatchers.IO) {
             respository.addImage(image)
         }
-
     }
-
-
     fun deleteimage(image: Image) {
-
         viewModelScope.launch(Dispatchers.IO) {
-
             respository.deleteImage(image)
         }
-
     }
-
-    fun updateimage(image: Image) {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            respository.updateImage(image)
-        }
-
-    }
-
     fun getallImage(): LiveData<List<Image>> {
         return imagelist
     }
-
     fun getlastedImage(): LiveData<List<Image>> {
-
         return respository.getlastedImage().asLiveData()
     }
 
